@@ -2,7 +2,7 @@
   "name": "m00n-phases",
   "version": "1.0.0",
   "description": "Pixel art desktop app that shows tonight's moon phase and the next 7 nights. Built with Electron and JavaScript.",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
