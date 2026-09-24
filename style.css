@@ -1,31 +1,43 @@
+/* -- BASE html, body -- */
 html, body {
     margin: 0;
     width: 768px;
     height: 432px;
     overflow: hidden;
     background: transparent;
+    font-family: monospace;
+    color: black;
+}
+
+/* -- WINDOW DRAG -- */
+.drag-region {
     -webkit-app-region: drag;
 }
 
+.no-drag-region {
+    -webkit-app-region: no-drag;
+}
+
+/* -- GENERAL BACKGROUND CONFIG */
 #bg {
     position: absolute;
     width: 768px;
-    height: 432px;
+    height: 288px;
     image-rendering: pixelated;
 }
 
-#bg.day {
+/* DAY-NIGHT BACKGROUND */
+body.day #bg {
     background-image: url(assets/UI-default.png);
     background-size: 768px 288px;
-    background-position: 0 0;
 }
 
-#bg.night {
+body.night #bg {
     background-image: url(assets/UI-night.png);
     background-size: 768px 576px;
     background-position: 0 0;
 }
 
-#bg.night.frame-b {
+body.night.frame-b #bg {
     background-position: 0 -288px;
 }
