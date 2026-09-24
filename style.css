@@ -1,4 +1,31 @@
 html, body {
     margin: 0;
+    width: 768px;
+    height: 432px;
+    overflow: hidden;
     background: transparent;
+    -webkit-app-region: drag;
+}
+
+#bg {
+    position: absolute;
+    width: 768px;
+    height: 432px;
+    image-rendering: pixelated;
+}
+
+#bg.day {
+    background-image: url(assets/UI-default.png);
+    background-size: 768px 288px;
+    background-position: 0 0;
+}
+
+#bg.night {
+    background-image: url(assets/UI-night.png);
+    background-size: 768px 576px;
+    background-position: 0 0;
+}
+
+#bg.night.frame-b {
+    background-position: 0 -288px;
 }
