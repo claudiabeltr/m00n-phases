@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 const SCALE = 3;
@@ -26,4 +26,8 @@ app.whenReady().then(createWindow);
 // Close app when close window.
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
+});
+
+ipcMain.on('close-app', () => {
+    app.quit();
 });
