@@ -9,6 +9,8 @@ function createWindow() {
     const win = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
+        minWidth: 256,
+        minHeight: 96,
         resizable: true,
         frame: false,
         transparent: true,
@@ -17,6 +19,7 @@ function createWindow() {
         }
     });
 
+    win.setAspectRatio(WIDTH / HEIGHT); // <- keep 8:3 ratio on resize
     win.loadFile('index.html');
 }
 
