@@ -18,7 +18,8 @@ html, body {
     -webkit-app-region: no-drag;
 }
 
-/* -- GENERAL BACKGROUND CONFIG */
+/* -- BACKGROUND -- */
+/* -- GENERAL BACKGROUND CONFIG -- */
 #bg {
     position: absolute;
     width: 100%;
@@ -28,7 +29,7 @@ html, body {
     image-rendering: pixelated;
 }
 
-/* DAY-NIGHT BACKGROUND */
+/* -- DAY-NIGHT BACKGROUND -- */
 body.day #bg {
     background-image: url(assets/UI-default.png);
     background-size: 100% 100%;
@@ -43,3 +44,42 @@ body.night #bg {
 body.night.frame-b #bg {
     background-position: 0 100%;
 }
+
+/* -- BUTTONS -- */
+
+/* -- MENU BUTTON: Next 7 moons -- */
+#weeklymoons-btn {
+    position: absolute;
+    left: 3%;
+    top: 8%;
+    width: 12.5%;
+    height: 33%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    background-image: url(assets/menu-button.png);
+    background-size: 200% 100%;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+
+#weeklymoons-btn:hover {
+    background-position: 100% 0;
+}
+
+/* -- CLOSE BUTTON -- */
+#exit-btn {
+    position: absolute;
+    right: 1.5%;
+    top: 4%;
+    width: 3%;
+    height: 7%;
+    border: none;
+    background: transparent;
+    color: black;
+    font-family: monospace;
+    cursor: pointer;
+}
+

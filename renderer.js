@@ -1,9 +1,11 @@
 const body = document.body;
 
-// Day/night check
+// -- Day/night check --
 function isNight(hour) {
   return hour >= 18 || hour < 6;
 }
+
+// -- Background --
 
 function updateBackground() {
   const hour = new Date().getHours();
@@ -22,3 +24,9 @@ updateBackground();
 if (isNight(new Date().getHours())) {
   setInterval(() => body.classList.toggle('frame-b'), 800);
 }
+
+// -- Buttons --
+// Close button
+document.getElementById('exit-btn').addEventListener('click', () => {
+  window.api.closeApp();
+});
