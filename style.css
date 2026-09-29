@@ -37,8 +37,9 @@ body.day #bg {
 
 body.night #bg {
     background-image: url(assets/UI-night.png);
-    background-size: 100% 100%;
+    background-size: 100% 200%;
     background-position: 0 0;
+    background-repeat: no-repeat;
 }
 
 body.night.frame-b #bg {
@@ -46,7 +47,6 @@ body.night.frame-b #bg {
 }
 
 /* -- BUTTONS -- */
-
 /* -- MENU BUTTON: Next 7 moons -- */
 #weeklymoons-btn {
     position: absolute;
@@ -84,4 +84,65 @@ body.night.frame-b #bg {
     background-size: 100% 100%;
     cursor: pointer;
 }
+
+/* -- SPRITES -- */
+/* -- MOON SPRITE -- */
+#moon {
+    position: absolute;
+    left: 7.5%;
+    top: 25%;
+    width: 15.5%;
+    /*height: 41.5%;*/
+    aspect-ratio: 1;
+    background-image: url(assets/moon-phases.png);
+    background-size: 800% 100%;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+}
+
+/* -- MOON TEXT -- */
+#moon-text {
+    position: absolute;
+    left: 27%;
+    top: 31%;
+    width: 34%;
+}
+
+#moon-text p {
+    margin: 4px 0;
+}
+
+#moon-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#moon-date {
+    font-size: 12px;
+}
+
+#moon-desc {
+    font-size: 11px;
+}
+
+/* -- MOON: DAY MESSAGE -- */
+#day-message {
+    position: absolute;
+    left: 40%;
+    top: 38%;
+    width: 40%;
+    display: none;
+}
+
+body.day #day-message {
+    display: block;
+}
+
+body.day #moon,
+body.day #moon-text {
+    display: none;
+}
+
+
+
 
