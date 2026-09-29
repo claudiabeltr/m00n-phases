@@ -50,10 +50,10 @@ body.night.frame-b #bg {
 /* -- MENU BUTTON: Next 7 moons -- */
 #weeklymoons-btn {
     position: absolute;
-    left: 3%;
-    top: 8%;
-    width: 12.5%;
-    height: 33%;
+    left: 1.4%;
+    top: 3%;
+    width: 4%;
+    height: 8%;
     border: none;
     padding: 0;
     cursor: pointer;
@@ -72,14 +72,16 @@ body.night.frame-b #bg {
 /* -- CLOSE BUTTON -- */
 #exit-btn {
     position: absolute;
-    right: 1.5%;
+    right: 2.2%;
     top: 4%;
-    width: 3%;
-    height: 7%;
+    width: 2%;
+    height: 5%;
+    padding: 0;
     border: none;
     background: transparent;
-    color: black;
-    font-family: monospace;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4 L20 20 M20 4 L4 20' stroke='gray' stroke-width='3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     cursor: pointer;
 }
 
