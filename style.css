@@ -187,6 +187,10 @@ body.day #moon-text {
     display: none;
 }
 
+body.week #day-message {
+    display: none !important;
+}
+
 
 
 
