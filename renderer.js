@@ -1,4 +1,16 @@
 const body = document.body;
+
+// -- DOM elements --
+const bgElement = document.getElementById('bg');
+const moonElement = document.getElementById('moon');
+const moonNameElement = document.getElementById('moon-name');
+const moonDateElement = document.getElementById('moon-date');
+const moonDescElement = document.getElementById('moon-desc');
+const weekScreenElement = document.getElementById('week-screen');
+const exitButtonElement = document.getElementById('exit-btn');
+const weeklyMoonsButtonElement = document.getElementById('weeklymoons-btn');
+
+// -- Moon phase data --
 const PHASES = [
   {
     key: 'New Moon',
@@ -42,12 +54,44 @@ const PHASES = [
   }
 ];
 
-// -- Day/night check --
+// Left position of each day slot, matching UI-week.png
+const WEEK_SLOT_POSITIONS = [3.9, 18.0, 32.0, 46.1, 59.8, 74.2, 88.3];
+
+// Gaps between the 8 phase frames in the sprite sheet
+const PHASE_STEP = 100 / 7;
+
+// -- Day/night helpers --
 function isNight(hour) {
   return hour >= 18 || hour < 6;
 }
 
-// -- Background --
+function getTonightDate(now) {
+  const d = new Date(now);
+  const isPastMidnight = d.getHours() < 6;
+
+  if (isPastMidnight) {
+    d.setDate(d.getDate() - 1);
+  }
+
+  return d;
+}
+
+function formatDate(d) {
+  return d.toISOString().split('T')[0];
+}
+
+// -- Moon phase helpers --
+function getPhaseIndex(apiKey) {
+  const index = PHASES.findIndex((phase) => phase.key === apiKey);
+
+  if (index === -1) {
+    return 0;
+  }
+
+  return index;
+}
+
+// -- Background (day/night switch) --
 function updateBackground() {
   const hour = new Date().getHours();
 
@@ -60,45 +104,7 @@ function updateBackground() {
   }
 }
 
-updateBackground();
-
-if (isNight(new Date().getHours())) {
-  setInterval(() => body.classList.toggle('frame-b'), 800);
-}
-
-// -- Buttons --
-// Close button
-document.getElementById('exit-btn').addEventListener('click', () => {
-  window.api.closeApp();
-});
-
-// -- Moon Phases logic --
-function getPhaseIndex(apiKey) {
-  const i = PHASES.findIndex(p => p.key === apiKey);
-
-  if (index === -1) {
-    return 0;
-  }
-
-  return index;
-}
-
-function formatDate(d) {
-  return d.toISOString().split('T')[0];
-}
-
-function getTonightDate(now) {
-  const d = new Date(now);
-  const isPastMidnight = Date.getHours() < 6;
-
-  if (isPastMidnight) {
-    Date.setDate(Date.getDate() - 1);
-  }
-
-  return Date;
-
-}
-
+// -- Main screen: tonight's moon --
 async function loadMoon() {
   const currentHour = new Date().getHours();
 
@@ -112,13 +118,7 @@ async function loadMoon() {
   const phaseIndex = getPhaseIndex(phaseKey);
   const phase = PHASES[phaseIndex];
 
-  const moonElement = document.getElementById('moon');
-  const moonNameElement = document.getElementById('moon-name');
-  const moonDateElement = document.getElementById('moon-date');
-  const moonDescElement = document.getElementById('moon-desc');
-
-  const step = 100 / 7; // 7 gaps between 8 frames
-  moonElement.style.backgroundPosition = `-${phaseIndex * step}% 0`;
+  moonElement.style.backgroundPosition = `-${phaseIndex * PHASE_STEP}% 0`;
 
   moonNameElement.textContent = phase.name;
   moonDateElement.textContent = tonight.toLocaleDateString('en-US', {
@@ -129,4 +129,59 @@ async function loadMoon() {
   moonDescElement.textContent = phase.desc;
 }
 
+// -- Week screen: next 7 moons --
+async function loadWeekScreen() {
+  weekScreenElement.innerHTML = '';
+
+  const anchorDate = getTonightDate(new Date());
+
+  for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+    const date = new Date(anchorDate);
+    date.setDate(date.getDate() + dayOffset);
+
+    const dateFormatted = formatDate(date);
+    const phaseKey = await window.api.getMoonPhase(dateFormatted);
+    const phaseIndex = getPhaseIndex(phaseKey);
+
+    const dayElement = document.createElement('div');
+    dayElement.className = 'week-day';
+    dayElement.style.left = WEEK_SLOT_POSITIONS[dayOffset] + '%';
+    dayElement.style.backgroundPosition = `-${phaseIndex * PHASE_STEP}% 0`;
+
+    const labelElement = document.createElement('span');
+    labelElement.className = 'week-day-label';
+    labelElement.textContent = date.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'numeric'
+    });
+
+    dayElement.appendChild(labelElement);
+    weekScreenElement.appendChild(dayElement);
+  }
+}
+
+// -- Buttons --
+exitButtonElement.addEventListener('click', () => {
+  window.api.closeApp();
+});
+
+weeklyMoonsButtonElement.addEventListener('click', () => {
+  const isWeekScreenOpen = body.classList.contains('week');
+
+  if (isWeekScreenOpen) {
+    body.classList.remove('week');
+    updateBackground(); // !! restores 'day' or 'night'
+  } else {
+    body.classList.remove('day', 'night', 'frame-b');
+    body.classList.add('week');
+    loadWeekScreen();
+  }
+});
+
+// -- Init --
+updateBackground();
 loadMoon();
+
+if (isNight(new Date().getHours())) {
+  setInterval(() => body.classList.toggle('frame-b'), 800);
+}
