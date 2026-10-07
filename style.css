@@ -85,10 +85,19 @@ body.week #week-screen {
 
 .week-day-label {
     position: absolute;
-    top: 100%;
+    top: 115%;
     width: 100%;
     text-align: center;
     font-size: 9px;
+}
+
+.week-day-phase {
+    position: absolute;
+    top: calc(115% + 10px);
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    color: #555;
 }
 
 

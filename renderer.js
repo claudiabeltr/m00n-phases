@@ -163,6 +163,7 @@ async function loadWeekScreen() {
     const dateFormatted = formatDate(date);
     const phaseKey = await window.api.getMoonPhase(dateFormatted);
     const phaseIndex = getPhaseIndex(phaseKey);
+    const phase = PHASES[phaseIndex];
 
     const dayElement = document.createElement('div');
     dayElement.className = 'week-day';
@@ -176,7 +177,12 @@ async function loadWeekScreen() {
       month: 'numeric'
     });
 
+    const phaseNameElement = document.createElement('span');
+    phaseNameElement.className = 'week-day-phase';
+    phaseNameElement.textContent = phase.name;
+
     dayElement.appendChild(labelElement);
+    dayElement.appendChild(phaseNameElement);
     weekScreenElement.appendChild(dayElement);
 
     setMoonPhaseSprite(dayElement, phaseIndex);

@@ -13,8 +13,8 @@ function createWindow() {
     const win = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
-        minWidth: 256,
-        minHeight: 96,
+        minWidth: 512,
+        minHeight: 192,
         resizable: true,
         frame: false,
         transparent: true,
