@@ -100,6 +100,15 @@ body.week #week-screen {
     color: #555;
 }
 
+.week-day-desc {
+    position: absolute;
+    top: calc(115% + 30px);
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    color: #222;
+}
+
 
 /* -- BUTTONS -- */
 /* -- MENU BUTTON: Next 7 moons -- */
