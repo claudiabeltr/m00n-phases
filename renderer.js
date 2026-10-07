@@ -58,7 +58,7 @@ const PHASES = [
 const WEEK_SLOT_POSITIONS = [3.9, 18.0, 32.0, 46.1, 59.8, 74.2, 88.3];
 
 // Gaps between the 8 phase frames in the sprite sheet
-const PHASE_STEP = 100 / 7;
+//const PHASE_STEP = 100 / 7;
 
 // -- Day/night helpers --
 function isNight(hour) {
@@ -92,6 +92,27 @@ function getPhaseIndex(apiKey) {
 }
 
 // -- Background (day/night switch) --
+function setMoonPhaseSprite(element, phaseIndex) {
+  element.dataset.phaseIndex = phaseIndex;
+
+  const applySprite = () => {
+    const elementWidth = Math.round(element.getBoundingClientRect().width);
+
+    if (elementWidth === 0) {
+      return;
+    }
+
+    const spriteWidth = elementWidth * 8;
+    element.style.backgroundSize = `${spriteWidth}px ${elementWidth}px`;
+    element.style.backgroundPosition = `-${phaseIndex * elementWidth}px 0px`;
+  };
+
+  applySprite();
+
+  const resizeObserver = new ResizeObserver(applySprite);
+  resizeObserver.observe(element);
+}
+
 function updateBackground() {
   const hour = new Date().getHours();
 
@@ -117,8 +138,8 @@ async function loadMoon() {
   const phaseKey = await window.api.getMoonPhase(tonightFormatted);
   const phaseIndex = getPhaseIndex(phaseKey);
   const phase = PHASES[phaseIndex];
-
-  moonElement.style.backgroundPosition = `-${phaseIndex * PHASE_STEP}% 0`;
+  
+  setMoonPhaseSprite(moonElement, phaseIndex);
 
   moonNameElement.textContent = phase.name;
   moonDateElement.textContent = tonight.toLocaleDateString('en-US', {
@@ -145,8 +166,8 @@ async function loadWeekScreen() {
 
     const dayElement = document.createElement('div');
     dayElement.className = 'week-day';
+
     dayElement.style.left = WEEK_SLOT_POSITIONS[dayOffset] + '%';
-    dayElement.style.backgroundPosition = `-${phaseIndex * PHASE_STEP}% 0`;
 
     const labelElement = document.createElement('span');
     labelElement.className = 'week-day-label';
@@ -157,6 +178,8 @@ async function loadWeekScreen() {
 
     dayElement.appendChild(labelElement);
     weekScreenElement.appendChild(dayElement);
+
+    setMoonPhaseSprite(dayElement, phaseIndex);
   }
 }
 

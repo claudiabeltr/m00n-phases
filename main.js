@@ -5,8 +5,8 @@ const SCALE = 3;
 const WIDTH = 256 * SCALE;
 const HEIGHT = 97 * SCALE;
 
-const COORDS = '40.7128,-74.0060';
-const TZ = '0';
+const LAT = 40.4168;
+const LNG = -3.7038;
 
 // -- WINDOW MOONPHASE --
 function createWindow() {
@@ -25,6 +25,7 @@ function createWindow() {
 
     win.setAspectRatio(WIDTH / HEIGHT); // <- keep 8:3 ratio on resize
     win.loadFile('index.html');
+    win.webContents.openDevTools();
 }
 
 // When Electron is ready, then create Window.
@@ -41,11 +42,11 @@ ipcMain.on('close-app', () => {
 
 // Moon Phase API
 ipcMain.handle('get-moon-phase', async (event, dateStr) => {
-    const url = `https://aa.usno.navy.mil/api/rstt/oneday?date=${dateStr}&coords=${COORDS}&tz=${TZ}`;
+    const url = `https://api.sunrise-sunset.org/v2?lat=${LAT}&lng=${LNG}&date=${dateStr}`;
     const res = await fetch(url);
     if (!res.ok) {
-        throw new('API ERROR: ' + res.status);
+        throw new Error('API ERROR: ' + res.status);
     }
     const data = await res.json();
-    return data.properties.data.curphase;
+    return data.moon_phase;
 });

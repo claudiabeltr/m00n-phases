@@ -74,12 +74,13 @@ body.week #week-screen {
 .week-day {
     position: absolute;
     top: 22%;
-    width: 9%;
+    width: 8%;
     aspect-ratio: 1;
     background-image: url(assets/moon-phases.png);
     background-size: 800% 100%;
     background-repeat: no-repeat;
     image-rendering: pixelated;
+    min-width: 34px;
 }
 
 .week-day-label {
