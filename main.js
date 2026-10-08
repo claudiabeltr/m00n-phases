@@ -40,6 +40,10 @@ ipcMain.on('close-app', () => {
     app.quit();
 });
 
+ipcMain.on('minimize-app', () => {
+    BrowserWindow.getFocusedWindow().minimize();
+})
+
 // Moon Phase API
 ipcMain.handle('get-moon-phase', async (event, dateStr) => {
     const url = `https://api.sunrise-sunset.org/v2?lat=${LAT}&lng=${LNG}&date=${dateStr}`;

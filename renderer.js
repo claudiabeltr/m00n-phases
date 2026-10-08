@@ -8,6 +8,7 @@ const moonDateElement = document.getElementById('moon-date');
 const moonDescElement = document.getElementById('moon-desc');
 const weekScreenElement = document.getElementById('week-screen');
 const exitButtonElement = document.getElementById('exit-btn');
+const minimizeButtonElement = document.getElementById('minimize-btn');
 const weeklyMoonsButtonElement = document.getElementById('weeklymoons-btn');
 
 // -- Moon phase data --
@@ -210,6 +211,10 @@ weeklyMoonsButtonElement.addEventListener('click', () => {
     body.classList.add('week');
     loadWeekScreen();
   }
+});
+
+minimizeButtonElement.addEventListener('click', () => {
+  window.api.minimizeApp();
 });
 
 // -- Init --
