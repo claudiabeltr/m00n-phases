@@ -70,9 +70,16 @@ body.night.frame-b #bg {
 }
 
 /* -- WEEK BACKGROUND -- */
+/* -- WEEK: DAY BACKGROUND -- */
 body.week #bg {
     background-image: url(assets/UI-week.png);
-    background-size: 100% 100%;
+    background-size: 100% 200%;
+    background-position: 0 0;
+}
+
+/* -- WEEK: NIGHT BACKGROUND -- */
+body.week.week-night #bg {
+    background-position: 0 100%;
 }
 
 body.week #moon,

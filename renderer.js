@@ -209,6 +209,11 @@ weeklyMoonsButtonElement.addEventListener('click', () => {
   } else {
     body.classList.remove('day', 'night', 'frame-b');
     body.classList.add('week');
+
+    if (isNight(new Date().getHours())) {
+      body.classList.add('week-night');
+    }
+
     loadWeekScreen();
   }
 });
