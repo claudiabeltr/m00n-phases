@@ -175,16 +175,16 @@ body.week #week-screen {
 /* -- MINIMIZE BUTTON -- */
 #minimize-btn {
     position: absolute;
-    right: 7%;
+    right: 5%;
     top: 4%;
-    width: 2%;
-    height: 5%;
+    width: 4%;
+    height: 15%;
     padding: 0;
     border: none;
     background: transparent;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 18 L20 18' stroke='gray' stroke-width='3'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: 60% 30%;
     cursor: pointer;
 }
 
