@@ -217,6 +217,33 @@ minimizeButtonElement.addEventListener('click', () => {
   window.api.minimizeApp();
 });
 
+// -- Cursor sparkle trail --
+let lastSparkleTime = 0;
+
+function spawnSparkle(x, y) {
+  const sparkle = document.createElement('div');
+  sparkle.className = 'cursor-sparkle';
+  sparkle.style.left = `${x}px`;
+  sparkle.style.top = `${y}px`;
+
+  document.body.appendChild(sparkle);
+
+  sparkle.addEventListener('animationend', () => {
+    sparkle.remove();
+  });
+}
+
+window.api.onMousePosition(({ x, y }) => {
+  const now = Date.now();
+
+  if (now - lastSparkleTime < 30) {
+    return;
+  }
+
+  lastSparkleTime = now;
+  spawnSparkle(x, y);
+});
+
 // -- Init --
 updateBackground();
 loadMoon();

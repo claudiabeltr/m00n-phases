@@ -18,6 +18,29 @@ html, body {
     -webkit-app-region: no-drag;
 }
 
+/* -- CURSOR -- */
+.cursor-sparkle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1 L9.5 6.5 L15 8 L9.5 9.5 L8 15 L6.5 9.5 L1 8 L6.5 6.5 Z' fill='gold'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    animation: sparkle-fade 1s ease-out forwards;
+}
+
+@keyframes sparkle-fade {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.2) translateY(-6px);
+    }
+}
+
 /* -- BACKGROUND -- */
 /* -- GENERAL BACKGROUND CONFIG -- */
 #bg {

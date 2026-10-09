@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
 
 const SCALE = 3;
@@ -25,7 +25,25 @@ function createWindow() {
 
     win.setAspectRatio(WIDTH / HEIGHT); // <- keep 8:3 ratio on resize
     win.loadFile('index.html');
-    win.webContents.openDevTools();
+    // Forward global mouse movement to the renderer, for the sparkle trail
+    setInterval(() => {
+    const { x, y } = screen.getCursorScreenPoint();
+    const bounds = win.getBounds();
+
+    const isInsideWindow =
+        x >= bounds.x &&
+        x <= bounds.x + bounds.width &&
+        y >= bounds.y &&
+        y <= bounds.y + bounds.height;
+
+    if (isInsideWindow) {
+        win.webContents.send('mouse-position', {
+        x: x - bounds.x,
+        y: y - bounds.y
+        });
+    }
+    }, 150);
+    //win.webContents.openDevTools();
 }
 
 // When Electron is ready, then create Window.
