@@ -15,43 +15,43 @@ const weeklyMoonsButtonElement = document.getElementById('weeklymoons-btn');
 const PHASES = [
   {
     key: 'New Moon',
-    name: 'Luna nueva',
-    desc: 'La cara visible no recibe luz solar directa.'
+    name: 'New Moon',
+    desc: 'Hidden with Selene, this darkness was said to hold the power of new beginnings.'
   },
   {
     key: 'Waxing Crescent',
-    name: 'Creciente',
-    desc: 'Una pequeña porción comienza a iluminarse.'
+    name: 'Waxing Crescent',
+    desc: 'Diana\'s young light was believed to fuel the first spark of growth and courage.'
   },
   {
     key: 'First Quarter',
-    name: 'Cuarto creciente',
-    desc: 'La mitad está iluminada y va en aumento.'
+    name: 'First Quarter',
+    desc: 'The half-lit moon carried the strength to push through obstacles and decide.'
   },
   {
     key: 'Waxing Gibbous',
-    name: 'Gibosa creciente',
-    desc: 'Casi toda la luna está iluminada.'
+    name: 'Waxing Gibbous',
+    desc: 'Selene\'s chariot grew brighter, said to sharpen focus before the final push.'
   },
   {
     key: 'Full Moon',
-    name: 'Luna llena',
-    desc: 'Toda la cara visible está iluminada.'
+    name: 'Full Moon',
+    desc: 'Luna rode the sky at her fullest, granting clarity, power, and revelation.'
   },
   {
     key: 'Waning Gibbous',
-    name: 'Gibosa menguante',
-    desc: 'Empieza a perder iluminación.'
+    name: 'Waning Gibbous',
+    desc: 'Hecate\'s fading light was thought to bring gratitude and quiet release.'
   },
   {
     key: 'Last Quarter',
-    name: 'Cuarto menguante',
-    desc: 'La mitad está iluminada y va en descenso.'
+    name: 'Last Quarter',
+    desc: 'The half-dark moon held the strength to let go and forgive old wounds.'
   },
   {
     key: 'Waning Crescent',
-    name: 'Menguante',
-    desc: 'Solo una pequeña porción sigue iluminada.'
+    name: 'Waning Crescent',
+    desc: 'Hecate\'s last sliver offered rest, surrender, and quiet inner wisdom.'
   }
 ];
 
