@@ -16,50 +16,47 @@ const PHASES = [
   {
     key: 'New Moon',
     name: 'New Moon',
-    desc: 'Hidden with Selene, this darkness was said to hold the power of new beginnings.'
+    desc: 'Hidden with Selene in the darkest sky, this phase was said to hold the power of new beginnings, inviting quiet reflection before anything is set in motion.'
   },
   {
     key: 'Waxing Crescent',
     name: 'Waxing Crescent',
-    desc: 'Diana\'s young light was believed to fuel the first spark of growth and courage.'
+    desc: 'Diana\'s young light was believed to fuel the first spark of growth and courage, urging seeds planted in darkness to finally reach toward the sun.'
   },
   {
     key: 'First Quarter',
     name: 'First Quarter',
-    desc: 'The half-lit moon carried the strength to push through obstacles and decide.'
+    desc: 'The half-lit moon carried the strength to push through obstacles, a turning point said to demand decisive action and the will to keep moving forward.'
   },
   {
     key: 'Waxing Gibbous',
     name: 'Waxing Gibbous',
-    desc: 'Selene\'s chariot grew brighter, said to sharpen focus before the final push.'
+    desc: 'Selene\'s chariot grew ever brighter across the heavens, said to sharpen focus and patience in the final stretch before the moon\'s light peaks.'
   },
   {
     key: 'Full Moon',
     name: 'Full Moon',
-    desc: 'Luna rode the sky at her fullest, granting clarity, power, and revelation.'
+    desc: 'Luna rode the night sky at her fullest, granting clarity, power, and revelation, a moment the ancients believed could illuminate truths kept hidden by daylight.'
   },
   {
     key: 'Waning Gibbous',
     name: 'Waning Gibbous',
-    desc: 'Hecate\'s fading light was thought to bring gratitude and quiet release.'
+    desc: 'Hecate\'s fading light was thought to bring gratitude and quiet release, a gentle call to honor what has been accomplished before letting it go.'
   },
   {
     key: 'Last Quarter',
     name: 'Last Quarter',
-    desc: 'The half-dark moon held the strength to let go and forgive old wounds.'
+    desc: 'The half-dark moon held the strength to let go and forgive old wounds, said to clear space within the spirit for whatever comes next.'
   },
   {
     key: 'Waning Crescent',
     name: 'Waning Crescent',
-    desc: 'Hecate\'s last sliver offered rest, surrender, and quiet inner wisdom.'
+    desc: 'Hecate\'s last sliver offered rest, surrender, and quiet inner wisdom, guiding the soul gently back toward the stillness of the dark moon.'
   }
 ];
 
 // Left position of each day slot, matching UI-week.png
 const WEEK_SLOT_POSITIONS = [3.9, 18.0, 32.0, 46.1, 59.8, 74.2, 88.3];
-
-// Gaps between the 8 phase frames in the sprite sheet
-//const PHASE_STEP = 100 / 7;
 
 // -- Day/night helpers --
 function isNight(hour) {
@@ -92,7 +89,8 @@ function getPhaseIndex(apiKey) {
   return index;
 }
 
-// -- Background (day/night switch) --
+// Keeps a sprite's background position correct in pixels, even as
+// the element's size changes on window resize
 function setMoonPhaseSprite(element, phaseIndex) {
   element.dataset.phaseIndex = phaseIndex;
 
@@ -114,6 +112,7 @@ function setMoonPhaseSprite(element, phaseIndex) {
   resizeObserver.observe(element);
 }
 
+// -- Background (day/night switch) --
 function updateBackground() {
   const hour = new Date().getHours();
 
@@ -135,28 +134,27 @@ async function loadMoon() {
   }
 
   const tonight = getTonightDate(new Date());
+  const tonightFormatted = formatDate(tonight);
 
   try {
-    const tonightFormatted = formatDate(tonight);
     const phaseKey = await window.api.getMoonPhase(tonightFormatted);
     const phaseIndex = getPhaseIndex(phaseKey);
     const phase = PHASES[phaseIndex];
-    
+
     setMoonPhaseSprite(moonElement, phaseIndex);
+
+    moonNameElement.textContent = phase.name;
+    moonDateElement.textContent = tonight.toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    moonDescElement.textContent = phase.desc;
   } catch (error) {
     moonNameElement.textContent = 'No connection';
-    moonNameElement.textContent = '';
-    moonNameElement.textContent = 'Could not reach the moon phase API.';
-
+    moonDateElement.textContent = '';
+    moonDescElement.textContent = 'Could not reach the moon phase API.';
   }
-
-  moonNameElement.textContent = phase.name;
-  moonDateElement.textContent = tonight.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
-  moonDescElement.textContent = phase.desc;
 }
 
 // -- Week screen: next 7 moons --
@@ -170,13 +168,9 @@ async function loadWeekScreen() {
     date.setDate(date.getDate() + dayOffset);
 
     const dateFormatted = formatDate(date);
-    const phaseKey = await window.api.getMoonPhase(dateFormatted);
-    const phaseIndex = getPhaseIndex(phaseKey);
-    const phase = PHASES[phaseIndex];
 
     const dayElement = document.createElement('div');
     dayElement.className = 'week-day';
-
     dayElement.style.left = WEEK_SLOT_POSITIONS[dayOffset] + '%';
 
     const labelElement = document.createElement('span');
@@ -189,33 +183,30 @@ async function loadWeekScreen() {
     const phaseNameElement = document.createElement('span');
     phaseNameElement.className = 'week-day-phase';
 
-    phaseNameElement.textContent = phase.name;
     const phaseDescElement = document.createElement('span');
     phaseDescElement.className = 'week-day-desc';
-    phaseDescElement.textContent = phase.desc;
 
-     try {
+    try {
       const phaseKey = await window.api.getMoonPhase(dateFormatted);
       const phaseIndex = getPhaseIndex(phaseKey);
       const phase = PHASES[phaseIndex];
 
       phaseNameElement.textContent = phase.name;
       phaseDescElement.textContent = phase.desc;
+
       dayElement.appendChild(labelElement);
       dayElement.appendChild(phaseNameElement);
       dayElement.appendChild(phaseDescElement);
       weekScreenElement.appendChild(dayElement);
 
       setMoonPhaseSprite(dayElement, phaseIndex);
-     } catch (error) {
-
+    } catch (error) {
       phaseNameElement.textContent = 'No connection';
 
       dayElement.appendChild(labelElement);
       dayElement.appendChild(phaseNameElement);
       weekScreenElement.appendChild(dayElement);
-
-     }
+    }
   }
 }
 
@@ -228,8 +219,8 @@ weeklyMoonsButtonElement.addEventListener('click', () => {
   const isWeekScreenOpen = body.classList.contains('week');
 
   if (isWeekScreenOpen) {
-    body.classList.remove('week');
-    updateBackground(); // !! restores 'day' or 'night'
+    body.classList.remove('week', 'week-night');
+    updateBackground();
   } else {
     body.classList.remove('day', 'night', 'frame-b');
     body.classList.add('week');
