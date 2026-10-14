@@ -62,6 +62,10 @@ function createMainWindow() {
     let mouseTrackingInterval = setInterval(sendMousePosition, 50);
 
     function sendMousePosition() {
+        if (!mainWindow || mainWindow.isDestroyed()) {
+        return;
+        }
+
         const { x, y } = screen.getCursorScreenPoint();
         const bounds = mainWindow.getBounds();
 
