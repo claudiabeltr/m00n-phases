@@ -135,12 +135,20 @@ async function loadMoon() {
   }
 
   const tonight = getTonightDate(new Date());
-  const tonightFormatted = formatDate(tonight);
-  const phaseKey = await window.api.getMoonPhase(tonightFormatted);
-  const phaseIndex = getPhaseIndex(phaseKey);
-  const phase = PHASES[phaseIndex];
-  
-  setMoonPhaseSprite(moonElement, phaseIndex);
+
+  try {
+    const tonightFormatted = formatDate(tonight);
+    const phaseKey = await window.api.getMoonPhase(tonightFormatted);
+    const phaseIndex = getPhaseIndex(phaseKey);
+    const phase = PHASES[phaseIndex];
+    
+    setMoonPhaseSprite(moonElement, phaseIndex);
+  } catch (error) {
+    moonNameElement.textContent = 'No connection';
+    moonNameElement.textContent = '';
+    moonNameElement.textContent = 'Could not reach the moon phase API.';
+
+  }
 
   moonNameElement.textContent = phase.name;
   moonDateElement.textContent = tonight.toLocaleDateString('en-US', {
@@ -180,18 +188,34 @@ async function loadWeekScreen() {
 
     const phaseNameElement = document.createElement('span');
     phaseNameElement.className = 'week-day-phase';
-    phaseNameElement.textContent = phase.name;
 
+    phaseNameElement.textContent = phase.name;
     const phaseDescElement = document.createElement('span');
     phaseDescElement.className = 'week-day-desc';
     phaseDescElement.textContent = phase.desc;
 
-    dayElement.appendChild(labelElement);
-    dayElement.appendChild(phaseNameElement);
-    dayElement.appendChild(phaseDescElement);
-    weekScreenElement.appendChild(dayElement);
+     try {
+      const phaseKey = await window.api.getMoonPhase(dateFormatted);
+      const phaseIndex = getPhaseIndex(phaseKey);
+      const phase = PHASES[phaseIndex];
 
-    setMoonPhaseSprite(dayElement, phaseIndex);
+      phaseNameElement.textContent = phase.name;
+      phaseDescElement.textContent = phase.desc;
+      dayElement.appendChild(labelElement);
+      dayElement.appendChild(phaseNameElement);
+      dayElement.appendChild(phaseDescElement);
+      weekScreenElement.appendChild(dayElement);
+
+      setMoonPhaseSprite(dayElement, phaseIndex);
+     } catch (error) {
+
+      phaseNameElement.textContent = 'No connection';
+
+      dayElement.appendChild(labelElement);
+      dayElement.appendChild(phaseNameElement);
+      weekScreenElement.appendChild(dayElement);
+
+     }
   }
 }
 

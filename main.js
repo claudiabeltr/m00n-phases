@@ -110,7 +110,8 @@ ipcMain.on('minimize-app', () => {
 // Moon Phase API
 ipcMain.handle('get-moon-phase', async (event, dateStr) => {
     const url = `https://api.sunrise-sunset.org/v2?lat=${LAT}&lng=${LNG}&date=${dateStr}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) }); // 8s timeout
+
     if (!res.ok) {
         throw new Error('API ERROR: ' + res.status);
     }
