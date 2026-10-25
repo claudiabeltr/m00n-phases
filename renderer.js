@@ -157,6 +157,20 @@ async function loadMoon() {
   }
 }
 
+// -- Week screen: description fills the space down to the card bottom --
+function fitWeekDescriptions() {
+  const bottomMargin = 24; // keeps the text clear of the frame border
+
+  document.querySelectorAll('.week-day-desc').forEach((descElement) => {
+    const top = descElement.getBoundingClientRect().top;
+    const available = window.innerHeight - top - bottomMargin;
+
+    descElement.style.maxHeight = `${Math.max(available, 0)}px`;
+  });
+}
+
+window.addEventListener('resize', fitWeekDescriptions);
+
 // -- Week screen: next 7 moons --
 async function loadWeekScreen() {
   weekScreenElement.innerHTML = '';
@@ -208,6 +222,8 @@ async function loadWeekScreen() {
       weekScreenElement.appendChild(dayElement);
     }
   }
+
+  fitWeekDescriptions();
 }
 
 // -- Buttons --
