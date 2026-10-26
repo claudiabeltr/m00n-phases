@@ -30,7 +30,17 @@ body {
     z-index: 9999;
 }
 
+/* -- FONTS -- */
+@font-face {
+    font-family: 'Pixelify Sans';
+    src: url(assets/fonts/PixelifySans-VariableFont_wght.ttf) format('truetype');
+    font-weight: 400 700;
+}
 
+#screen-title {
+    font-family: 'Pixelify Sans', monospace;
+    /* rest of the rules stay the same */
+}
 
 /* -- BACKGROUND -- */
 /* -- GENERAL BACKGROUND CONFIG -- */
@@ -208,16 +218,13 @@ body.week #week-screen {
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    font-weight: bold;
     color: #4d4983;
-    /* cloud purple, day (gray bar) */
     pointer-events: none;
 }
 
 body.night #screen-title,
 body.week-night #screen-title {
     color: #d6d3f0;
-    /* light lavender, night (purple bar) */
 }
 
 #screen-title::before {
