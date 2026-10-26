@@ -133,21 +133,12 @@ body.week #week-screen {
     text-align: center;
     font-size: 10px;
     color: #222;
-    padding-right: 2px;
     pointer-events: auto;
     -webkit-app-region: no-drag;
 }
 
 .week-day-desc::-webkit-scrollbar {
-    width: 3px;
-}
-
-.week-day-desc::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.week-day-desc::-webkit-scrollbar-thumb {
-    background: #888;
+    display: none;
 }
 
 
