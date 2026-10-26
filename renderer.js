@@ -254,19 +254,67 @@ minimizeButtonElement.addEventListener('click', () => {
 });
 
 // -- Cursor sparkle trail --
+const sparkleCanvas = document.getElementById('sparkle-canvas');
+const sparkleCtx = sparkleCanvas.getContext('2d');
+const SPARKLE_LIFETIME = 1000; // ms, same as the old animation
+
+let sparkles = [];
+let isAnimatingSparkles = false;
 let lastSparkleTime = 0;
 
-function spawnSparkle(x, y) {
-  const sparkle = document.createElement('div');
-  sparkle.className = 'cursor-sparkle';
-  sparkle.style.left = `${x}px`;
-  sparkle.style.top = `${y}px`;
+function resizeSparkleCanvas() {
+  sparkleCanvas.width = window.innerWidth;
+  sparkleCanvas.height = window.innerHeight;
+}
 
-  document.body.appendChild(sparkle);
+window.addEventListener('resize', resizeSparkleCanvas);
+resizeSparkleCanvas();
 
-  sparkle.addEventListener('animationend', () => {
-    sparkle.remove();
+// 4-point star, same shape as the old SVG
+function drawStar(x, y, size) {
+  const inner = size * 0.21;
+
+  sparkleCtx.beginPath();
+  sparkleCtx.moveTo(x, y - size);
+  sparkleCtx.lineTo(x + inner, y - inner);
+  sparkleCtx.lineTo(x + size, y);
+  sparkleCtx.lineTo(x + inner, y + inner);
+  sparkleCtx.lineTo(x, y + size);
+  sparkleCtx.lineTo(x - inner, y + inner);
+  sparkleCtx.lineTo(x - size, y);
+  sparkleCtx.lineTo(x - inner, y - inner);
+  sparkleCtx.closePath();
+  sparkleCtx.fill();
+}
+
+function animateSparkles(now) {
+  sparkleCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+  sparkles = sparkles.filter((sparkle) => now - sparkle.born < SPARKLE_LIFETIME);
+
+  if (sparkles.length === 0) {
+    isAnimatingSparkles = false;
+    return;
+  }
+
+  sparkleCtx.fillStyle = 'gold';
+
+  sparkles.forEach((sparkle) => {
+    const progress = (now - sparkle.born) / SPARKLE_LIFETIME;
+
+    sparkleCtx.globalAlpha = 1 - progress;
+    drawStar(sparkle.x, sparkle.y - 6 * progress, 3.5 * (1 - 0.8 * progress));
   });
+
+  requestAnimationFrame(animateSparkles);
+}
+
+function spawnSparkle(x, y) {
+  sparkles.push({ x, y, born: performance.now() });
+
+  if (!isAnimatingSparkles) {
+    isAnimatingSparkles = true;
+    requestAnimationFrame(animateSparkles);
+  }
 }
 
 window.api.onMousePosition(({ x, y }) => {
@@ -278,6 +326,27 @@ window.api.onMousePosition(({ x, y }) => {
 
   lastSparkleTime = now;
   spawnSparkle(x, y);
+});
+
+// -- Pause mouse tracking while hovering any interactive element --
+let isOverInteractiveElement = false;
+
+document.addEventListener('mouseover', (event) => {
+  const isInteractive = event.target.closest('.no-drag-region');
+
+  if (isInteractive && !isOverInteractiveElement) {
+    isOverInteractiveElement = true;
+    window.api.pauseMouseTracking();
+  }
+});
+
+document.addEventListener('mouseout', (event) => {
+  const stillInteractive = event.relatedTarget && event.relatedTarget.closest('.no-drag-region');
+
+  if (!stillInteractive && isOverInteractiveElement) {
+    isOverInteractiveElement = false;
+    window.api.resumeMouseTracking();
+  }
 });
 
 // -- Init --

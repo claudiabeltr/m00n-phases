@@ -63,7 +63,7 @@ function createMainWindow() {
 
     function sendMousePosition() {
         if (!mainWindow || mainWindow.isDestroyed()) {
-        return;
+            return;
         }
 
         const { x, y } = screen.getCursorScreenPoint();
