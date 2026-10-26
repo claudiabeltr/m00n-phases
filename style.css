@@ -206,6 +206,37 @@ body.week #week-screen {
     cursor: pointer;
 }
 
+/* -- SCREEN TITLE -- */
+#screen-title {
+    position: absolute;
+    left: 17.5%;
+    top: 2.5%;
+    width: 63.5%;
+    height: 9.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #4d4983;
+    /* cloud purple, day (gray bar) */
+    pointer-events: none;
+}
+
+body.night #screen-title,
+body.week-night #screen-title {
+    color: #d6d3f0;
+    /* light lavender, night (purple bar) */
+}
+
+#screen-title::before {
+    content: 'Moon of the day';
+}
+
+body.week #screen-title::before {
+    content: 'Moons of the week';
+}
+
 /* -- SQUARE HITBOXES -- */
 #weeklymoons-btn::after,
 #exit-btn::after,
