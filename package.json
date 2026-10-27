@@ -4,14 +4,23 @@
   "description": "Pixel art desktop app that shows tonight's moon phase and the next 7 nights. Built with Electron and JavaScript.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/claudiabeltr/m00n-phases.git"
   },
+  "build": {
+    "appId": "com.claudiabeltr.m00n-phases",
+    "productName": "m00n-phases",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.png"
+    }
+  },
   "keywords": [],
-  "author": "",
+  "author": "claudiabeltr",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
@@ -19,6 +28,7 @@
   },
   "homepage": "https://github.com/claudiabeltr/m00n-phases#readme",
   "devDependencies": {
-    "electron": "^44.4.5"
+    "electron": "^44.4.5",
+    "electron-builder": "^26.18.0"
   }
 }
