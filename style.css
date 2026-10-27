@@ -1,4 +1,8 @@
-/* -- BASE html, body -- */
+/* ======================================================
+   m00n-phases - styles
+   ====================================================== */
+
+/* -- BASE -- */
 html,
 body {
     margin: 0;
@@ -11,23 +15,13 @@ body {
 }
 
 /* -- WINDOW DRAG -- */
+/* The whole window drags, interactive elements opt out */
 .drag-region {
     -webkit-app-region: drag;
 }
 
 .no-drag-region {
     -webkit-app-region: no-drag;
-}
-
-/* -- CURSOR -- */
-#sparkle-canvas {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
 }
 
 /* -- FONTS -- */
@@ -37,13 +31,7 @@ body {
     font-weight: 400 700;
 }
 
-#screen-title {
-    font-family: 'Pixelify Sans', monospace;
-    /* rest of the rules stay the same */
-}
-
 /* -- BACKGROUND -- */
-/* -- GENERAL BACKGROUND CONFIG -- */
 #bg {
     position: absolute;
     width: 100%;
@@ -53,107 +41,64 @@ body {
     image-rendering: pixelated;
 }
 
-/* -- DAY-NIGHT BACKGROUND -- */
+/* Day */
 body.day #bg {
     background-image: url(assets/UI-default.png);
-    background-size: 100% 100%;
 }
 
+/* Night: 2 frames stacked in one image, swapped to twinkle the stars */
 body.night #bg {
     background-image: url(assets/UI-night.png);
     background-size: 100% 200%;
     background-position: 0 0;
-    background-repeat: no-repeat;
 }
 
 body.night.frame-b #bg {
     background-position: 0 100%;
 }
 
-/* -- WEEK BACKGROUND -- */
-/* -- WEEK: DAY BACKGROUND -- */
+/* Week menu: day frame on top, night frame below */
 body.week #bg {
     background-image: url(assets/UI-week.png);
     background-size: 100% 200%;
     background-position: 0 0;
 }
 
-/* -- WEEK: NIGHT BACKGROUND -- */
 body.week.week-night #bg {
     background-position: 0 100%;
 }
 
-body.week #moon,
-body.week #moon-text,
-body.week #day-message {
-    display: none;
-}
-
-#week-screen {
+/* -- SCREEN TITLE -- */
+#screen-title {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    display: none;
+    left: 17.5%;
+    top: 2.5%;
+    width: 63.5%;
+    height: 9.5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 14px;
+    color: #4d4983;
     pointer-events: none;
 }
 
-body.week #week-screen {
-    display: block;
+body.night #screen-title,
+body.week-night #screen-title {
+    color: #d6d3f0;
 }
 
-/* !each day slot */
-.week-day {
-    position: absolute;
-    top: 22%;
-    width: 8%;
-    aspect-ratio: 1;
-    background-image: url(assets/moon-phases.png);
-    background-size: 800% 100%;
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    min-width: 34px;
+#screen-title::before {
+    content: 'Moon of the day';
 }
 
-.week-day-label {
-    position: absolute;
-    top: 115%;
-    width: 100%;
-    text-align: center;
-    font-size: 9px;
+body.week #screen-title::before {
+    content: 'Moons of the week';
 }
-
-.week-day-phase {
-    position: absolute;
-    top: calc(115% + 10px);
-    width: 100%;
-    text-align: center;
-    font-size: 8px;
-    color: #555;
-}
-
-.week-day-desc {
-    position: absolute;
-    top: calc(115% + 30px);
-    width: 140%;
-    left: -15%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    overflow-wrap: break-word;
-    max-height: 80px;
-    text-align: center;
-    font-size: 10px;
-    color: #222;
-    pointer-events: auto;
-    -webkit-app-region: no-drag;
-}
-
-.week-day-desc::-webkit-scrollbar {
-    display: none;
-}
-
 
 /* -- BUTTONS -- */
-/* -- MENU BUTTON: Next 7 moons -- */
+/* Menu button: next 7 moons */
 #weeklymoons-btn {
     position: absolute;
     left: 1.4%;
@@ -175,7 +120,7 @@ body.week #week-screen {
     background-position: 100% 0;
 }
 
-/* -- CLOSE BUTTON -- */
+/* Close button */
 #exit-btn {
     position: absolute;
     right: 2.2%;
@@ -191,7 +136,7 @@ body.week #week-screen {
     cursor: pointer;
 }
 
-/* -- MINIMIZE BUTTON -- */
+/* Minimize button */
 #minimize-btn {
     position: absolute;
     right: 5%;
@@ -207,35 +152,7 @@ body.week #week-screen {
     cursor: pointer;
 }
 
-/* -- SCREEN TITLE -- */
-#screen-title {
-    position: absolute;
-    left: 17.5%;
-    top: 2.5%;
-    width: 63.5%;
-    height: 9.5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #4d4983;
-    pointer-events: none;
-}
-
-body.night #screen-title,
-body.week-night #screen-title {
-    color: #d6d3f0;
-}
-
-#screen-title::before {
-    content: 'Moon of the day';
-}
-
-body.week #screen-title::before {
-    content: 'Moons of the week';
-}
-
-/* -- SQUARE HITBOXES -- */
+/* Square hitboxes: fixed-size clickable area centered on each icon */
 #weeklymoons-btn::after,
 #exit-btn::after,
 #minimize-btn::after {
@@ -269,14 +186,12 @@ body.week #screen-title::before {
     margin: -14px 0 0 -14px;
 }
 
-/* -- SPRITES -- */
-/* -- MOON SPRITE -- */
+/* -- MAIN SCREEN: MOON SPRITE -- */
 #moon {
     position: absolute;
     left: 7.5%;
     top: 25%;
     width: 15.5%;
-    /*height: 41.5%;*/
     aspect-ratio: 1;
     background-image: url(assets/moon-phases.png);
     background-size: 800% 100%;
@@ -284,7 +199,7 @@ body.week #screen-title::before {
     image-rendering: pixelated;
 }
 
-/* -- MOON TEXT -- */
+/* -- MAIN SCREEN: MOON TEXT -- */
 #moon-text {
     position: absolute;
     left: 27%;
@@ -309,7 +224,7 @@ body.week #screen-title::before {
     font-size: 11px;
 }
 
-/* -- MOON: DAY MESSAGE -- */
+/* -- MAIN SCREEN: DAY MESSAGE -- */
 #day-message {
     position: absolute;
     left: 40%;
@@ -318,15 +233,98 @@ body.week #screen-title::before {
     display: none;
 }
 
-body.day #day-message {
-    display: block;
+/* -- WEEK SCREEN -- */
+#week-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    pointer-events: none;
 }
 
+/* One slot per day */
+.week-day {
+    position: absolute;
+    top: 22%;
+    width: 8%;
+    aspect-ratio: 1;
+    background-image: url(assets/moon-phases.png);
+    background-size: 800% 100%;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    min-width: 34px;
+}
+
+.week-day-label {
+    position: absolute;
+    top: 115%;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+}
+
+.week-day-phase {
+    position: absolute;
+    top: calc(115% + 10px);
+    width: 100%;
+    text-align: center;
+    font-size: 8px;
+    color: #555;
+}
+
+/* Description: scrolls with the mouse wheel, scrollbar hidden */
+.week-day-desc {
+    position: absolute;
+    top: calc(115% + 30px);
+    width: 140%;
+    left: -15%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    max-height: 80px;
+    text-align: center;
+    font-size: 10px;
+    color: #222;
+    pointer-events: auto;
+    -webkit-app-region: no-drag;
+}
+
+.week-day-desc::-webkit-scrollbar {
+    display: none;
+}
+
+/* -- SCREEN STATES -- */
+/* Day: no moon, only the message */
 body.day #moon,
 body.day #moon-text {
     display: none;
 }
 
+body.day #day-message {
+    display: block;
+}
+
+/* Week menu: hides the main screen, shows the 7 moons */
+body.week #moon,
+body.week #moon-text {
+    display: none;
+}
+
 body.week #day-message {
     display: none !important;
+}
+
+body.week #week-screen {
+    display: block;
+}
+
+/* -- CURSOR SPARKLES -- */
+#sparkle-canvas {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
 }

@@ -2,24 +2,32 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <title>m00n-phases</title>
+
+    <!-- Fonts (remote copy, style.css also has a local @font-face) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <title>m00n-phases</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="drag-region">
+
+    <!-- Full-window layers: they must come BEFORE the buttons,
+         otherwise their drag region blocks the button clicks -->
     <div id="bg"></div>
     <canvas id="sparkle-canvas"></canvas>
     <div id="screen-title"></div>
     <div id="week-screen"></div>
 
+    <!-- Buttons -->
     <button id="weeklymoons-btn" class="no-drag-region"></button>
     <button id="minimize-btn" class="no-drag-region"></button>
     <button id="exit-btn" class="no-drag-region"></button>
 
+    <!-- Main screen: tonight's moon -->
     <div id="moon"></div>
     <div id="moon-text">
         <p id="moon-name"></p>
@@ -27,6 +35,7 @@
         <p id="moon-desc"></p>
     </div>
 
+    <!-- Main screen: daytime message -->
     <p id="day-message">No moon available, come back later !</p>
 
     <script src="renderer.js"></script>

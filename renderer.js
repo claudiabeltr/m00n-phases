@@ -1,7 +1,10 @@
+// ======================================================
+// m00n-phases - renderer
+// ======================================================
+
 const body = document.body;
 
 // -- DOM elements --
-const bgElement = document.getElementById('bg');
 const moonElement = document.getElementById('moon');
 const moonNameElement = document.getElementById('moon-name');
 const moonDateElement = document.getElementById('moon-date');
@@ -10,8 +13,23 @@ const weekScreenElement = document.getElementById('week-screen');
 const exitButtonElement = document.getElementById('exit-btn');
 const minimizeButtonElement = document.getElementById('minimize-btn');
 const weeklyMoonsButtonElement = document.getElementById('weeklymoons-btn');
+const sparkleCanvas = document.getElementById('sparkle-canvas');
+const sparkleCtx = sparkleCanvas.getContext('2d');
+
+// -- Constants --
+const NIGHT_START_HOUR = 18; // night: 18:00 - 05:59
+const NIGHT_END_HOUR = 6;
+const STAR_TWINKLE_MS = 800;
+const WEEK_DAYS = 7;
+const PHASE_COUNT = 8;
+const SPARKLE_LIFETIME = 1000; // ms
+const SPARKLE_INTERVAL = 30;   // ms between sparkles
+
+// Left position of each day slot, matching UI-week.png
+const WEEK_SLOT_POSITIONS = [3.9, 18.0, 32.0, 46.1, 59.8, 74.2, 88.3];
 
 // -- Moon phase data --
+// Order matches the frames in moon-phases.png
 const PHASES = [
   {
     key: 'New Moon',
@@ -55,17 +73,15 @@ const PHASES = [
   }
 ];
 
-// Left position of each day slot, matching UI-week.png
-const WEEK_SLOT_POSITIONS = [3.9, 18.0, 32.0, 46.1, 59.8, 74.2, 88.3];
-
 // -- Day/night helpers --
 function isNight(hour) {
-  return hour >= 18 || hour < 6;
+  return hour >= NIGHT_START_HOUR || hour < NIGHT_END_HOUR;
 }
 
+// Between midnight and 06:00 it is still "last night"
 function getTonightDate(now) {
   const d = new Date(now);
-  const isPastMidnight = d.getHours() < 6;
+  const isPastMidnight = d.getHours() < NIGHT_END_HOUR;
 
   if (isPastMidnight) {
     d.setDate(d.getDate() - 1);
@@ -74,8 +90,13 @@ function getTonightDate(now) {
   return d;
 }
 
+// YYYY-MM-DD using the LOCAL date (toISOString would use UTC)
 function formatDate(d) {
-  return d.toISOString().split('T')[0];
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
 }
 
 // -- Moon phase helpers --
@@ -89,11 +110,9 @@ function getPhaseIndex(apiKey) {
   return index;
 }
 
-// Keeps a sprite's background position correct in pixels, even as
-// the element's size changes on window resize
+// Shows the right frame of the sprite sheet, in whole pixels,
+// and keeps it correct when the element is resized
 function setMoonPhaseSprite(element, phaseIndex) {
-  element.dataset.phaseIndex = phaseIndex;
-
   const applySprite = () => {
     const elementWidth = Math.round(element.getBoundingClientRect().width);
 
@@ -101,8 +120,7 @@ function setMoonPhaseSprite(element, phaseIndex) {
       return;
     }
 
-    const spriteWidth = elementWidth * 8;
-    element.style.backgroundSize = `${spriteWidth}px ${elementWidth}px`;
+    element.style.backgroundSize = `${elementWidth * PHASE_COUNT}px ${elementWidth}px`;
     element.style.backgroundPosition = `-${phaseIndex * elementWidth}px 0px`;
   };
 
@@ -125,19 +143,25 @@ function updateBackground() {
   }
 }
 
+// Swaps the 2 night frames to make the stars twinkle
+function startStarTwinkle() {
+  if (!isNight(new Date().getHours())) {
+    return;
+  }
+
+  setInterval(() => body.classList.toggle('frame-b'), STAR_TWINKLE_MS);
+}
+
 // -- Main screen: tonight's moon --
 async function loadMoon() {
-  const currentHour = new Date().getHours();
-
-  if (!isNight(currentHour)) {
+  if (!isNight(new Date().getHours())) {
     return;
   }
 
   const tonight = getTonightDate(new Date());
-  const tonightFormatted = formatDate(tonight);
 
   try {
-    const phaseKey = await window.api.getMoonPhase(tonightFormatted);
+    const phaseKey = await window.api.getMoonPhase(formatDate(tonight));
     const phaseIndex = getPhaseIndex(phaseKey);
     const phase = PHASES[phaseIndex];
 
@@ -157,7 +181,8 @@ async function loadMoon() {
   }
 }
 
-// -- Week screen: description fills the space down to the card bottom --
+// -- Week screen: description height --
+// Each description fills the space down to the bottom of the card
 function fitWeekDescriptions() {
   const bottomMargin = 24; // keeps the text clear of the frame border
 
@@ -177,11 +202,9 @@ async function loadWeekScreen() {
 
   const anchorDate = getTonightDate(new Date());
 
-  for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+  for (let dayOffset = 0; dayOffset < WEEK_DAYS; dayOffset++) {
     const date = new Date(anchorDate);
     date.setDate(date.getDate() + dayOffset);
-
-    const dateFormatted = formatDate(date);
 
     const dayElement = document.createElement('div');
     dayElement.className = 'week-day';
@@ -201,7 +224,7 @@ async function loadWeekScreen() {
     phaseDescElement.className = 'week-day-desc';
 
     try {
-      const phaseKey = await window.api.getMoonPhase(dateFormatted);
+      const phaseKey = await window.api.getMoonPhase(formatDate(date));
       const phaseIndex = getPhaseIndex(phaseKey);
       const phase = PHASES[phaseIndex];
 
@@ -213,6 +236,7 @@ async function loadWeekScreen() {
       dayElement.appendChild(phaseDescElement);
       weekScreenElement.appendChild(dayElement);
 
+      // Needs the element in the page, to measure its real size
       setMoonPhaseSprite(dayElement, phaseIndex);
     } catch (error) {
       phaseNameElement.textContent = 'No connection';
@@ -226,26 +250,30 @@ async function loadWeekScreen() {
   fitWeekDescriptions();
 }
 
+// -- Screen switching --
+function openWeekScreen() {
+  body.classList.remove('day', 'night', 'frame-b');
+  body.classList.add('week');
+
+  // The week menu follows the day/night colors
+  if (isNight(new Date().getHours())) {
+    body.classList.add('week-night');
+  }
+
+  loadWeekScreen();
+}
+
+function closeWeekScreen() {
+  body.classList.remove('week', 'week-night');
+  updateBackground();
+}
+
 // -- Buttons --
-exitButtonElement.addEventListener('click', () => {
-  window.api.closeApp();
-});
-
 weeklyMoonsButtonElement.addEventListener('click', () => {
-  const isWeekScreenOpen = body.classList.contains('week');
-
-  if (isWeekScreenOpen) {
-    body.classList.remove('week', 'week-night');
-    updateBackground();
+  if (body.classList.contains('week')) {
+    closeWeekScreen();
   } else {
-    body.classList.remove('day', 'night', 'frame-b');
-    body.classList.add('week');
-
-    if (isNight(new Date().getHours())) {
-      body.classList.add('week-night');
-    }
-
-    loadWeekScreen();
+    openWeekScreen();
   }
 });
 
@@ -253,15 +281,16 @@ minimizeButtonElement.addEventListener('click', () => {
   window.api.minimizeApp();
 });
 
-// -- Cursor sparkle trail --
-const sparkleCanvas = document.getElementById('sparkle-canvas');
-const sparkleCtx = sparkleCanvas.getContext('2d');
-const SPARKLE_LIFETIME = 1000; // ms, same as the old animation
+exitButtonElement.addEventListener('click', () => {
+  window.api.closeApp();
+});
 
+// -- Cursor sparkles: state --
 let sparkles = [];
 let isAnimatingSparkles = false;
 let lastSparkleTime = 0;
 
+// -- Cursor sparkles: canvas --
 function resizeSparkleCanvas() {
   sparkleCanvas.width = window.innerWidth;
   sparkleCanvas.height = window.innerHeight;
@@ -270,7 +299,7 @@ function resizeSparkleCanvas() {
 window.addEventListener('resize', resizeSparkleCanvas);
 resizeSparkleCanvas();
 
-// 4-point star, same shape as the old SVG
+// 4-point star
 function drawStar(x, y, size) {
   const inner = size * 0.21;
 
@@ -287,6 +316,7 @@ function drawStar(x, y, size) {
   sparkleCtx.fill();
 }
 
+// Each sparkle shrinks, rises and fades out over its lifetime
 function animateSparkles(now) {
   sparkleCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
   sparkles = sparkles.filter((sparkle) => now - sparkle.born < SPARKLE_LIFETIME);
@@ -317,10 +347,11 @@ function spawnSparkle(x, y) {
   }
 }
 
+// Mouse position comes from the main process
 window.api.onMousePosition(({ x, y }) => {
   const now = Date.now();
 
-  if (now - lastSparkleTime < 30) {
+  if (now - lastSparkleTime < SPARKLE_INTERVAL) {
     return;
   }
 
@@ -328,7 +359,7 @@ window.api.onMousePosition(({ x, y }) => {
   spawnSparkle(x, y);
 });
 
-// -- Pause mouse tracking while hovering any interactive element --
+// -- Pause mouse tracking over interactive elements --
 let isOverInteractiveElement = false;
 
 document.addEventListener('mouseover', (event) => {
@@ -352,7 +383,4 @@ document.addEventListener('mouseout', (event) => {
 // -- Init --
 updateBackground();
 loadMoon();
-
-if (isNight(new Date().getHours())) {
-  setInterval(() => body.classList.toggle('frame-b'), 800);
-}
+startStarTwinkle();
